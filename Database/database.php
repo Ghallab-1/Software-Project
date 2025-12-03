@@ -3,7 +3,7 @@ class Database
 {
     private $servername = "localhost";
     private $username = "Ghallab";
-    private $password = "Gh@llab_1";
+    private $password = "root";
     private $dbname = "attendance_db";
     public  $conn=null;
     
@@ -20,3 +20,4 @@ class Database
 }
 
 ?>
+
