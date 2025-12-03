@@ -1,7 +1,7 @@
 <?php
 
 $path=$_SERVER['DOCUMENT_ROOT'];
-require_once $path."/attendanceapp/database/database.php";
+require_once $path."/attendanceapp/Database/database.php";
 function clearTable($dbo,$tabName)
 {
     $c="delete from :tabname";
@@ -291,4 +291,5 @@ values
 
         }
     }
+
   }
