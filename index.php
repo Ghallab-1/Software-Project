@@ -1,2 +1,3 @@
 <?php
-echo "PHP IS WORKING";
+header("Location: /frontend/login.php");
+exit;
