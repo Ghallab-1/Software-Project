@@ -1,3 +1,2 @@
 <?php
-header("Location: fronend/login.php");
-exit;
+echo "PHP IS WORKING";
