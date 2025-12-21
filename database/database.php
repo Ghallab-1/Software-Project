@@ -1,23 +1,33 @@
 <?php
 class Database
 {
-  private $servername = "127.0.0.1";
-  private $username = "root";
-  private $password = "";
-  private $dbname = "attendance_db";
+  private $servername;
+  private $username;
+  private $password;
+  private $dbname;
+  private $port;
   public $conn = null;
 
   public function __construct() {
+    // Read from environment variables
+    $this->servername = getenv("DB_HOST") ?: "127.0.0.1";
+    $this->username   = getenv("DB_USER") ?: "root";
+    $this->password   = getenv("DB_PASS") ?: "";
+    $this->dbname     = getenv("DB_NAME") ?: "attendance_db";
+    $this->port       = getenv("DB_PORT") ?: 3306;
+
     try {
       $this->conn = new PDO(
-        "mysql:host={$this->servername};port=3306;dbname={$this->dbname};charset=utf8mb4",
+        "mysql:host={$this->servername};port={$this->port};dbname={$this->dbname};charset=utf8mb4",
         $this->username,
         $this->password,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        [
+          PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]
       );
     } catch (PDOException $e) {
-      throw $e;
+      die("Database connection failed: " . $e->getMessage());
     }
   }
 }
-?>
