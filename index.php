@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- CSS (absolute paths) -->
-    <link rel="stylesheet" href="/frontend/css/login.css">
-    <link rel="stylesheet" href="/frontend/css/loader.css">
+<link rel="stylesheet" href="/css/login.css">
+<link rel="stylesheet" href="/css/loader.css">
+
 
     <title>LoginPage</title>
 </head>
@@ -38,8 +39,10 @@
     </div>
 
     <!-- JS (absolute paths) -->
-    <script src="/frontend/js/jquery.js"></script>
-    <script src="/frontend/js/login.js"></script>
+    
+<script src="/js/jquery.js"></script>
+<script src="/js/login.js"></script>
+
 
 </body>
 </html>
