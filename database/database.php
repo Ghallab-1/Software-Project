@@ -18,7 +18,12 @@ class Database
 
     try {
       $this->conn = new PDO(
-        "mysql:host={$this->servername};port={$this->port};dbname={$this->dbname};charset=utf8mb4",
+  "mysql:host={$this->servername};
+   port={$this->port};
+   dbname={$this->dbname};
+   charset=utf8mb4;
+   sslmode=REQUIRED",
+
         $this->username,
         $this->password,
         [
