@@ -14,10 +14,13 @@ class Database
 
   public function __construct() {
 
-    $this->servername = getenv("DB_HOST");
-    $this->username   = getenv("DB_USER");
-    $this->password   = getenv("DB_PASS");
-    $this->dbname     = getenv("DB_NAME");
+    // Use environment variables when available, otherwise fallback to
+    // sensible defaults for local XAMPP development (MySQL)
+    $this->servername = getenv("DB_HOST") ?: '127.0.0.1';
+    $this->username   = getenv("DB_USER") ?: 'root';
+    $this->password   = getenv("DB_PASS") ?: '';
+    // The SQL fixtures use the database name `defaultdb` — use it by default
+    $this->dbname     = getenv("DB_NAME") ?: 'defaultdb';
     $this->port       = getenv("DB_PORT") ?: 3306;
 
     try {

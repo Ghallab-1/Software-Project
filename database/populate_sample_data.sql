@@ -1,5 +1,6 @@
 -- populate_sample_data.sql
-USE `attendance_db`;
+USE defaultdb;
+
 
 -- Insert 24 sample students (id will auto-increment)
 INSERT INTO `student_details` (`roll_no`,`name`) VALUES
