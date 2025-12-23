@@ -57,6 +57,25 @@ if ($action === "getFacultyCourses") {
     $fo  = new faculty_details(); // ✅ CASE FIXED
 
     $courses = $fo->getCoursesInASession($dbo, $sessionid, $facid);
+    // if nothing returned, include debug info to help diagnose
+    if (empty($courses)) {
+        try {
+            $stmt = $dbo->conn->prepare(
+                "SELECT COUNT(*) AS c FROM course_allotment WHERE faculty_id = :facid AND session_id = :sessionid"
+            );
+            $stmt->execute([":facid" => $facid, ":sessionid" => $sessionid]);
+            $cnt = (int)$stmt->fetch(PDO::FETCH_ASSOC)['c'];
+        } catch (Exception $e) {
+            $cnt = null;
+        }
+
+        echo json_encode([
+            'debug' => [ 'facid' => $facid, 'sessionid' => $sessionid, 'allotment_count' => $cnt ],
+            'courses' => []
+        ]);
+        exit;
+    }
+
     echo json_encode($courses);
     exit;
 }

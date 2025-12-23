@@ -9,31 +9,33 @@ class Database
 
     public function __construct()
     {
-        $host = getenv("DB_HOST");
-        $db   = getenv("DB_NAME");
-        $user = getenv("DB_USER");
-        $pass = getenv("DB_PASS");
-        $port = getenv("DB_PORT") ?: 3306;
+        // Prefer environment variables (for production), but provide
+        // sensible local defaults so the app works on XAMPP/localhost.
+        $host = getenv("DB_HOST") ?: '127.0.0.1';
+        $db   = getenv("DB_NAME") ?: 'attendance_db';
+        $user = getenv("DB_USER") ?: 'root';
+        $pass = getenv("DB_PASS") ?: '';
+        $port = (int)(getenv("DB_PORT") ?: 3306);
 
-        // Aiven SSL cert (must exist in /database/ca.pem)
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ];
+
+        // Only add SSL options if environment indicates a remote DB host
+        // and the CA file exists. This avoids SSL-related failures on local setups.
         $ca = __DIR__ . "/ca.pem";
+        if (getenv("DB_HOST") && file_exists($ca)) {
+            $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
+            $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+        }
 
         try {
-            $this->conn = new PDO(
-                "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4",
-                $user,
-                $pass,
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-
-                    // AIVEN SSL
-                    PDO::MYSQL_ATTR_SSL_CA => $ca,
-                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-                ]
-            );
+            $dsn = "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4";
+            $this->conn = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
-            die("DB CONNECTION FAILED: " . $e->getMessage());
+            // use a clear message to help local debugging
+            die("DB CONNECTION FAILED (host={$host} db={$db} user={$user}): " . $e->getMessage());
         }
     }
 }
