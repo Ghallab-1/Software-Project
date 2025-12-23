@@ -5,49 +5,35 @@ error_reporting(E_ALL);
 
 class Database
 {
-  private $servername;
-  private $username;
-  private $password;
-  private $dbname;
-  private $port;
-  public $conn = null;
+    public $conn;
 
-  public function __construct() {
+    public function __construct()
+    {
+        $host = getenv("DB_HOST");
+        $db   = getenv("DB_NAME");
+        $user = getenv("DB_USER");
+        $pass = getenv("DB_PASS");
+        $port = getenv("DB_PORT") ?: 3306;
 
-    // Use environment variables when available, otherwise fallback to
-    // sensible defaults for local XAMPP development (MySQL)
-    $this->servername = getenv("DB_HOST") ?: '127.0.0.1';
-    $this->username   = getenv("DB_USER") ?: 'root';
-    $this->password   = getenv("DB_PASS") ?: '';
-    // The SQL fixtures use the database name `defaultdb` — use it by default
-    $this->dbname     = getenv("DB_NAME") ?: 'defaultdb';
-    $this->port       = getenv("DB_PORT") ?: 3306;
+        // Aiven SSL cert (must exist in /database/ca.pem)
+        $ca = __DIR__ . "/ca.pem";
 
-    try {
+        try {
+            $this->conn = new PDO(
+                "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4",
+                $user,
+                $pass,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 
-  // 👇 ADD THIS LINE (before new PDO)
-  $caPath = __DIR__ . "/ca.pem";
-
-  $this->conn = new PDO(
-    "mysql:host={$this->servername};
-     port={$this->port};
-     dbname={$this->dbname};
-     charset=utf8mb4",
-    $this->username,
-    $this->password,
-    [
-      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-
-      // ✅ AIVEN SSL SETTINGS
-      PDO::MYSQL_ATTR_SSL_CA => $caPath,
-      PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
-    ]
-  );
-
-} catch (PDOException $e) {
-  die("Database connection failed: " . $e->getMessage());
-}
-
-  }
+                    // AIVEN SSL
+                    PDO::MYSQL_ATTR_SSL_CA => $ca,
+                    PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+                ]
+            );
+        } catch (PDOException $e) {
+            die("DB CONNECTION FAILED: " . $e->getMessage());
+        }
+    }
 }
