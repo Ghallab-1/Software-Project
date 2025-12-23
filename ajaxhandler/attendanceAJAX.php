@@ -5,13 +5,16 @@ require_once(__DIR__ . '/../database/facultyDetails.php');
 require_once(__DIR__ . '/../database/courseRegistrationDetails.php');
 require_once(__DIR__ . '/../database/attendanceDetails.php');
 
-/* Always send JSON */
+// ensure PHP session is available for AJAX handlers
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 header('Content-Type: application/json; charset=utf-8');
 
 function createCSVReport($list, $filename)
 {
     $finalFileName = __DIR__ . '/../' . $filename;
-
     $fp = fopen($finalFileName, "w");
     foreach ($list as $line) {
         fputcsv($fp, $line);
@@ -37,18 +40,23 @@ if ($action === "getSession") {
 /* ===================== GET FACULTY COURSES ===================== */
 if ($action === "getFacultyCourses") {
 
-    $facid = $_POST['facid'] ?? null;
-    $sessionid = $_POST['sessionid'] ?? null;
+    $facid = (int)($_POST['facid'] ?? 0);
+    $sessionid = (int)($_POST['sessionid'] ?? 0);
 
-    if (!$facid || !$sessionid) {
+    // fallback to server-side logged-in faculty id if client didn't send it
+    if ($facid === 0 && isset($_SESSION['current_user'])) {
+        $facid = (int)$_SESSION['current_user'];
+    }
+
+    if ($facid === 0 || $sessionid === 0) {
         echo json_encode([]);
         exit;
     }
 
     $dbo = new Database();
-    $fo = new faculty_details();
-    $courses = $fo->getCoursesInASession($dbo, $sessionid, $facid);
+    $fo  = new faculty_details(); // ✅ CASE FIXED
 
+    $courses = $fo->getCoursesInASession($dbo, $sessionid, $facid);
     echo json_encode($courses);
     exit;
 }
@@ -56,17 +64,17 @@ if ($action === "getFacultyCourses") {
 /* ===================== GET STUDENT LIST ===================== */
 if ($action === "getStudentList") {
 
-    $classid = $_POST['classid'];
-    $sessionid = $_POST['sessionid'];
-    $facid = $_POST['facid'];
-    $ondate = $_POST['ondate'];
+    $classid   = (int)$_POST['classid'];
+    $sessionid = (int)$_POST['sessionid'];
+    $facid     = (int)$_POST['facid'];
+    $ondate    = $_POST['ondate'];
 
     $dbo = new Database();
 
     $crgo = new CourseRegistrationDetails();
     $allstudents = $crgo->getRegisteredStudents($dbo, $sessionid, $classid);
 
-    $ado = new attendanceDetails();
+    $ado = new AttendanceDetails();
     $presentStudents = $ado->getPresentListOfAClassByAFacOnADate(
         $dbo,
         $sessionid,
@@ -93,7 +101,7 @@ if ($action === "getStudentList") {
 if ($action === "saveattendance") {
 
     $dbo = new Database();
-    $ado = new attendanceDetails();
+    $ado = new AttendanceDetails();
 
     $rv = $ado->saveAttendance(
         $dbo,
@@ -113,7 +121,7 @@ if ($action === "saveattendance") {
 if ($action === "downloadReport") {
 
     $dbo = new Database();
-    $ado = new attendanceDetails();
+    $ado = new AttendanceDetails();
 
     $list = $ado->getAttenDanceReport(
         $dbo,
@@ -134,6 +142,5 @@ if ($action === "downloadReport") {
     exit;
 }
 
-/* ===================== UNKNOWN ACTION ===================== */
 echo json_encode(["error" => "Invalid action"]);
 exit;
