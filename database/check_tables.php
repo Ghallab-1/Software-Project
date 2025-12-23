@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../database/database.php';
+require_once (__DIR__ . '/../database/database.php');
 
 $dbo = new Database();
 $tables = [

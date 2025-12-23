@@ -1,25 +1,25 @@
 <?php
-$path=$_SERVER['DOCUMENT_ROOT'];
-require_once $path."/attendanceapp/database/database.php";
+
+require_once(__DIR__ . "/database.php");
+
 class SessionDetails
 {
+    // This database connection will be received as an argument
     public function getSessions($dbo)
-        //this database connection will be 
-        //received as an argument
-        {
-        $rv=[];
-        $c="select * from session_details";   
-        $s=$dbo->conn->prepare($c);
-        try{
+    {
+        $rv = [];
+
+        $c = "SELECT * FROM session_details";
+        $s = $dbo->conn->prepare($c);
+
+        try {
             $s->execute();
-            $rv=$s->fetchAll(PDO::FETCH_ASSOC);//get the result in the form of an associative array
-
+            $rv = $s->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
         }
-        catch(Exception $e)
-        {
 
-        }
         return $rv;
-        }
+    }
 }
 ?>
