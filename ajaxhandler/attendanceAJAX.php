@@ -1,6 +1,5 @@
-
-header('Content-Type: application/json');
 <?php
+header('Content-Type: application/json');
 require_once(__DIR__ . '/../database/database.php');
 require_once(__DIR__ . '/../database/sessionDetails.php');
 require_once(__DIR__ . '/../database/facultyDetails.php');
