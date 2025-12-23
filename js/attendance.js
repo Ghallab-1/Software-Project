@@ -80,8 +80,14 @@ function fetchFacultyCourses(facid, sessionid) {
         },
         success: function(rv) {
             console.log("Courses received:", rv);
+            // If server returned debug info (when courses are empty), show it
+            if (rv && rv.debug) {
+                var d = rv.debug;
+                alert("Server debug — facid:" + d.facid + " sessionid:" + d.sessionid + " allotment_count:" + d.allotment_count);
+                console.error('getFacultyCourses debug', d);
+                rv = rv.courses || [];
+            }
             console.log("Number of courses:", rv ? rv.length : 0);
-            //alert(JSON.stringify(rv));
             let x = getCourseCardHTML(rv);
             $("#classlistarea").html(x);
         },
