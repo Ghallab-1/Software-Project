@@ -1,3 +1,5 @@
+
+header('Content-Type: application/json');
 <?php
 require_once(__DIR__ . '/../database/database.php');
 require_once(__DIR__ . '/../database/sessionDetails.php');
@@ -30,17 +32,13 @@ if (isset($_REQUEST['action'])) {
         echo json_encode($sobj->getSessions($dbo));
     }
 
-    if ($action == "getFacultyCourses") {
-        $facid = $_POST['facid'] ?? '';
-        $sessionid = $_POST['sessionid'] ?? '';
-
-        $dbo = new Database();
-        $fo = new faculty_details();
-        $rv = $fo->getCoursesInASession($dbo, $sessionid, $facid);
-
-        header('Content-Type: application/json');
-        echo json_encode($rv);
-    }
+   if ($action == "getFacultyCourses") {
+    echo json_encode([
+        "facid" => $_POST['facid'] ?? null,
+        "sessionid" => $_POST['sessionid'] ?? null
+    ]);
+    exit;
+}
 
     if ($action == "getStudentList") {
         $classid = $_POST['classid'];
