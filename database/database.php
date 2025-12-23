@@ -11,11 +11,11 @@ class Database
     {
         // Prefer environment variables (for production), but provide
         // sensible local defaults so the app works on XAMPP/localhost.
-        $host = getenv("DB_HOST") ?: '127.0.0.1';
+        $host = getenv("DB_HOST") ?: 'mysql-3f776c4a-khaled-6290.e.aivencloud.com';
         $db   = getenv("DB_NAME") ?: 'attendance_db';
-        $user = getenv("DB_USER") ?: 'root';
-        $pass = getenv("DB_PASS") ?: '';
-        $port = (int)(getenv("DB_PORT") ?: 3306);
+        $user = getenv("DB_USER") ?: 'avnadmin';
+        $pass = getenv("DB_PASS") ?: 'AVNS_RWEj07KgVFgDc4MF8Yj';
+        $port = (int)(getenv("DB_PORT") ?: 11891);
 
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
