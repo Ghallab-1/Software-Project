@@ -69,8 +69,16 @@ if ($action === "getFacultyCourses") {
             $cnt = null;
         }
 
+        // Include which database and DB user the handler is connected as — helps diagnose env differences
+        $dbinfo = null;
+        try {
+            $dbinfo = $dbo->conn->query("SELECT DATABASE() AS db, CURRENT_USER() AS user")->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            $dbinfo = ['error' => $e->getMessage()];
+        }
+
         echo json_encode([
-            'debug' => [ 'facid' => $facid, 'sessionid' => $sessionid, 'allotment_count' => $cnt ],
+            'debug' => [ 'facid' => $facid, 'sessionid' => $sessionid, 'allotment_count' => $cnt, 'dbinfo' => $dbinfo ],
             'courses' => []
         ]);
         exit;
