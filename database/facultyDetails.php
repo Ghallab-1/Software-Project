@@ -6,17 +6,23 @@ class faculty_details
 public function verifyUser($dbo, $un, $pw)
 {
     try {
-        return [
-            "status" => "DEBUG_OK",
-            "username" => $un,
-            "password_length" => strlen($pw),
-            "db" => $dbo->conn->query("SELECT DATABASE()")->fetchColumn()
-        ];
+        $stmt = $dbo->conn->prepare(
+            "SELECT id, name FROM faculty_details WHERE user_name = :un AND password = :pw LIMIT 1"
+        );
+        $stmt->execute([":un" => $un, ":pw" => $pw]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return [
+                "status" => "ALL OK",
+                "id" => (int)$row['id'],
+                "name" => $row['name']
+            ];
+        }
+
+        return ["status" => "ERROR", "message" => "Invalid credentials"];
     } catch (Throwable $e) {
-        return [
-            "status" => "DEBUG_ERROR",
-            "message" => $e->getMessage()
-        ];
+        return ["status" => "ERROR", "message" => $e->getMessage()];
     }
 }
 
