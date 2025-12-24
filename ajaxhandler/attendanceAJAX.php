@@ -23,12 +23,13 @@ function createCSVReport($list, $filename)
     fclose($fp);
 }
 
-if (!isset($_REQUEST['action'])) {
-    echo json_encode(["error" => "No action provided"]);
-    exit;
-}
+try {
+    if (!isset($_REQUEST['action'])) {
+        echo json_encode(["error" => "No action provided"]);
+        exit;
+    }
 
-$action = $_REQUEST['action'];
+    $action = $_REQUEST['action'];
 
 /* ===================== GET SESSIONS ===================== */
 if ($action === "getSession") {
@@ -171,7 +172,12 @@ if ($action === "downloadReport") {
     exit;
 }
 
-echo json_encode(["error" => "Invalid action"]);
-exit;
+    echo json_encode(["error" => "Invalid action"]);
+    exit;
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(["error" => "Server error", "details" => $e->getMessage()]);
+    exit;
+}
 
 

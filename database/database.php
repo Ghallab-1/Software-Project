@@ -24,7 +24,7 @@ class Database
         if (!$user) $missing[] = 'DB_USER';
         if (!$pass) $missing[] = 'DB_PASS';
         if (count($missing) > 0) {
-            die("DB ENV VARIABLES MISSING: " . implode(', ', $missing));
+            throw new Exception("DB ENV VARIABLES MISSING: " . implode(', ', $missing));
         }
 
         $options = [
