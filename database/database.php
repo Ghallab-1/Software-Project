@@ -18,8 +18,13 @@ class Database
         $pass = getenv("DB_PASS");
         $port = getenv("DB_PORT") ?: 11891;
 
-        if (!$host || !$db || !$user || !$pass) {
-            die("DB ENV VARIABLES MISSING");
+        $missing = [];
+        if (!$host) $missing[] = 'DB_HOST';
+        if (!$db) $missing[] = 'DB_NAME';
+        if (!$user) $missing[] = 'DB_USER';
+        if (!$pass) $missing[] = 'DB_PASS';
+        if (count($missing) > 0) {
+            die("DB ENV VARIABLES MISSING: " . implode(', ', $missing));
         }
 
         $options = [
