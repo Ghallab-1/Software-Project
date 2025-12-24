@@ -6,10 +6,17 @@ header("Content-Type: application/json; charset=utf-8");
 require_once(__DIR__ . "/../database/database.php");
 require_once(__DIR__ . "/../database/facultyDetails.php");
 
-$action = $_REQUEST["action"] ?? "";
+/*
+  Accept verifyUser by default
+  (prevents INVALID ACTION errors)
+*/
+$action = $_POST["action"] ?? "verifyUser";
 
 if ($action !== "verifyUser") {
-    echo json_encode(["status" => "INVALID ACTION"]);
+    echo json_encode([
+        "status" => "ERROR",
+        "message" => "Invalid action"
+    ]);
     exit;
 }
 
@@ -27,10 +34,11 @@ if ($un === "" || $pw === "") {
 try {
     $dbo = new Database();
     $fdo = new faculty_details();
+
     $rv = $fdo->verifyUser($dbo, $un, $pw);
 
     if (($rv["status"] ?? "") === "ALL OK") {
-        $_SESSION["current_user"] = $rv["id"];
+        $_SESSION["current_user"] = (int)$rv["id"];
     }
 
     echo json_encode($rv);
