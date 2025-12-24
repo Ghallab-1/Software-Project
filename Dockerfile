@@ -16,8 +16,3 @@ RUN sed -i "s/80/${PORT}/g" /etc/apache2/ports.conf \
     && sed -i "s/:80/:${PORT}/g" /etc/apache2/sites-enabled/000-default.conf
 
 EXPOSE 10000
-# Environment / secrets
-database/.env.php
-
-# Optional local files
-database/ca.pem
