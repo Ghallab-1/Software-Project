@@ -55,12 +55,7 @@ if ($action === "getFacultyCourses") {
     }
 
     $dbo = new Database();
-    $dbo = new Database();
-var_dump(
-    $dbo->conn->query("SELECT DATABASE(), CURRENT_USER()")->fetch()
-);
-die;
-
+    
     $fo  = new faculty_details(); // ✅ CASE FIXED
 
     $courses = $fo->getCoursesInASession($dbo, $sessionid, $facid);
