@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 header("Content-Type: application/json; charset=utf-8");
 
 require_once(__DIR__ . "/../database/database.php");
+require_once(__DIR__ . "/../database/facultyDetails.php");
 
-echo json_encode(["step" => "database_included"]);
+echo json_encode(["step" => "faculty_included"]);
 exit;
-
