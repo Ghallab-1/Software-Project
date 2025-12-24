@@ -16,7 +16,6 @@ class SessionDetails
             $s->execute();
             $rv = $s->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log($e->getMessage());
         }
 
         return $rv;

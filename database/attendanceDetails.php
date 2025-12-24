@@ -46,7 +46,6 @@ class attendanceDetails
                 ]);
                 $rv = [1];
             } catch (Exception $ee) {
-                error_log($ee->getMessage());
             }
         }
 
@@ -74,7 +73,6 @@ class attendanceDetails
             ]);
             $rv = $s->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log($e->getMessage());
         }
 
         return $rv;
