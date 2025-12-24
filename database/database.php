@@ -1,6 +1,5 @@
 <?php
 
-// Load local env (XAMPP)
 $envFile = __DIR__ . "/.env.php";
 if (file_exists($envFile)) {
     require_once $envFile;
@@ -11,22 +10,31 @@ class Database
     public PDO $conn;
 
     public function __construct()
-{
-    ini_set('display_errors', 1);
-    error_reporting(E_ALL);
+    {
+        $host = getenv("DB_HOST");
+        $db   = getenv("DB_NAME");
+        $user = getenv("DB_USER");
+        $pass = getenv("DB_PASS");
+        $port = getenv("DB_PORT") ?: 3306;
 
-    echo "<pre>";
+        if (!$host || !$db || !$user || !$pass) {
+            throw new RuntimeException("DB ENV VARIABLES MISSING");
+        }
 
-    var_dump([
-        'DB_HOST' => getenv("DB_HOST"),
-        'DB_NAME' => getenv("DB_NAME"),
-        'DB_USER' => getenv("DB_USER"),
-        'DB_PASS' => getenv("DB_PASS"),
-        'DB_PORT' => getenv("DB_PORT"),
-    ]);
+        $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 
-    echo "</pre>";
-    die("STOP HERE");
-}
+        $options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ];
 
+        $ca = __DIR__ . "/ca.pem";
+        if (file_exists($ca)) {
+            $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
+            $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+        }
+
+        $this->conn = new PDO($dsn, $user, $pass, $options);
+    }
 }
