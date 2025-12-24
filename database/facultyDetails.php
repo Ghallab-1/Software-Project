@@ -3,28 +3,22 @@ require_once(__DIR__ . "/database.php");
 
 class faculty_details
 {
-    public function verifyUser($dbo, $un, $pw)
-    {
-        $rv = ["id" => -1, "status" => "ERROR"];
-
-        $s = $dbo->conn->prepare(
-            "SELECT id, password FROM faculty_details WHERE user_name = :un"
-        );
-        $s->execute([":un" => $un]);
-
-        if ($s->rowCount() > 0) {
-            $row = $s->fetch(PDO::FETCH_ASSOC);
-            if ($row["password"] === $pw) {
-                $rv = ["id" => $row["id"], "status" => "ALL OK"];
-            } else {
-                $rv = ["id" => $row["id"], "status" => "Wrong password"];
-            }
-        } else {
-            $rv = ["id" => -1, "status" => "USER NAME DOES NOT EXISTS"];
-        }
-
-        return $rv;
+public function verifyUser($dbo, $un, $pw)
+{
+    try {
+        return [
+            "status" => "DEBUG_OK",
+            "username" => $un,
+            "password_length" => strlen($pw),
+            "db" => $dbo->conn->query("SELECT DATABASE()")->fetchColumn()
+        ];
+    } catch (Throwable $e) {
+        return [
+            "status" => "DEBUG_ERROR",
+            "message" => $e->getMessage()
+        ];
     }
+}
 
     public function getCoursesInASession($dbo, $sessionid, $facid)
     {
