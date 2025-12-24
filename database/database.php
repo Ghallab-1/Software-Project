@@ -1,7 +1,10 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
+// Load local env (XAMPP)
+$envFile = __DIR__ . "/.env.php";
+if (file_exists($envFile)) {
+    require_once $envFile;
+}
 
 class Database
 {
@@ -9,15 +12,13 @@ class Database
 
     public function __construct()
     {
-        // 🔒 ENV VARIABLES ONLY (Render / Aiven)
         $host = getenv("DB_HOST");
         $db   = getenv("DB_NAME");
         $user = getenv("DB_USER");
-        $pass = getenv("DB_PASSWORD");
-        $port = getenv("DB_PORT");
+        $pass = getenv("DB_PASS");
+        $port = getenv("DB_PORT") ?: 11891;
 
-        if (!$host || !$db || !$user || !$pass || !$port) {
-            http_response_code(500);
+        if (!$host || !$db || !$user || !$pass) {
             die("DB ENV VARIABLES MISSING");
         }
 
@@ -27,22 +28,13 @@ class Database
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
 
-        // 🔐 Aiven SSL
         $ca = __DIR__ . "/ca.pem";
-        if (!file_exists($ca)) {
-            http_response_code(500);
-            die("SSL CA FILE MISSING");
+        if (file_exists($ca)) {
+            $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
+            $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
         }
 
-        $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
-        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
-
-        try {
-            $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
-            $this->conn = new PDO($dsn, $user, $pass, $options);
-        } catch (PDOException $e) {
-            http_response_code(500);
-            die("DB CONNECTION FAILED");
-        }
+        $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+        $this->conn = new PDO($dsn, $user, $pass, $options);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 require_once(__DIR__ . '/../database/database.php');
 require_once(__DIR__ . '/../database/sessionDetails.php');
 require_once(__DIR__ . '/../database/facultyDetails.php');
@@ -54,6 +55,12 @@ if ($action === "getFacultyCourses") {
     }
 
     $dbo = new Database();
+    $dbo = new Database();
+var_dump(
+    $dbo->conn->query("SELECT DATABASE(), CURRENT_USER()")->fetch()
+);
+die;
+
     $fo  = new faculty_details(); // ✅ CASE FIXED
 
     $courses = $fo->getCoursesInASession($dbo, $sessionid, $facid);
@@ -171,3 +178,5 @@ if ($action === "downloadReport") {
 
 echo json_encode(["error" => "Invalid action"]);
 exit;
+
+
