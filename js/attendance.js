@@ -29,7 +29,6 @@ function loadSessions() {
             $("#ddlclass").html(getSessionHTML(rv));
         },
         error: function(xhr, status, err) {
-            console.error("getSession error", err);
         }
     });
 }
@@ -63,11 +62,9 @@ function fetchFacultyCourses(facid, sessionid) {
             sessionid: sessionid
         },
         success: function(rv) {
-            console.log("Courses:", rv);
             $("#classlistarea").html(getCourseCardHTML(rv));
         },
         error: function(xhr, status, err) {
-            console.error("getFacultyCourses error", err);
         }
     });
 }
@@ -138,7 +135,6 @@ function fetchStudentList(sessionid, classid, facid, ondate) {
             $("#studentlistarea").html(getStudentListHTML(rv));
         },
         error: function(xhr, status, err) {
-            console.error("getStudentList error", err);
         }
     });
 }

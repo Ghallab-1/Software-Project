@@ -2,28 +2,28 @@
 session_start();
 header("Content-Type: application/json; charset=utf-8");
 
-require_once(__DIR__ . "/../database/database.php");
-require_once(__DIR__ . "/../database/facultyDetails.php");
-
-$action = $_POST["action"] ?? "";
-
-if ($action !== "verifyUser") {
-    echo json_encode(["status" => "INVALID ACTION"]);
-    exit;
-}
-
-$un = trim($_POST["user_name"] ?? "");
-$pw = trim($_POST["password"] ?? "");
-
-if ($un === "" || $pw === "") {
-    echo json_encode([
-        "status" => "ERROR",
-        "message" => "Username and password required"
-    ]);
-    exit;
-}
-
 try {
+    require_once __DIR__ . "/../database/database.php";
+    require_once __DIR__ . "/../database/facultyDetails.php";
+
+    $action = $_POST["action"] ?? "";
+
+    if ($action !== "verifyUser") {
+        echo json_encode(["status" => "INVALID ACTION"]);
+        exit;
+    }
+
+    $un = trim($_POST["user_name"] ?? "");
+    $pw = trim($_POST["password"] ?? "");
+
+    if ($un === "" || $pw === "") {
+        echo json_encode([
+            "status" => "ERROR",
+            "message" => "Username and password required"
+        ]);
+        exit;
+    }
+
     $dbo = new Database();
     $fdo = new faculty_details();
 
